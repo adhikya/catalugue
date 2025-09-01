@@ -2,9 +2,9 @@ pipeline {
     agent  {
         label 'AGENT-1'
     }
-    /* environment { 
+    environment { 
         appVersion = ''
-    }  */
+    }
     options {
         timeout(time: 30, unit: 'MINUTES') 
         disableConcurrentBuilds()
@@ -18,19 +18,15 @@ pipeline {
     } */
     // Build
     stages {
-        stage('Build') {
+        stage('Read Package Version') {
             steps {
                 script {
-                    sh """
-                        echo "Hello Build"
-                        sleep 10
-                        env
-                    """    
-            
-                    }
+                    def packageJson = readJSON file: 'package.json'
+                    appVersion = packageJson.version
+                    echo "Package version: ${appVersion}"
                 }
             }
-                
+        }      
             
         stage('Test') {
             steps {
